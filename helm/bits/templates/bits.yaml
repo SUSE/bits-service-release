@@ -65,15 +65,17 @@ spec:
         - name: bits-assets
           mountPath: /assets/
         {{ end }}
-        {{- if or .Values.global.resources.cpu .Values.global.resources.memory }}
+        {{- with .Values.resources }}
+        {{- if or .cpu .memory }}
         resources:
           requests:
-          {{- if .Values.global.resources.cpu }}
-            cpu: {{ .Values.global.resources.cpu }}
-          {{ end }}
-          {{- if .Values.global.resources.memory }}
-            memory: {{ .Values.global.resources.memory }}
-          {{- end }}
+            {{- with .cpu }}
+            cpu: {{ . }}
+            {{ end }}
+            {{- with .memory }}
+            memory: {{ . }}
+            {{- end }}
+        {{- end }}
         {{- end }}
       {{- if .Values.download_eirinifs }}
       initContainers:

@@ -65,10 +65,16 @@ spec:
         - name: bits-assets
           mountPath: /assets/
         {{ end }}
+        {{- if or .Values.global.resources.cpu .Values.global.resources.memory }}
         resources:
           requests:
-            cpu: 800m
-            memory: 150Mi
+          {{- if .Values.global.resources.cpu }}
+            cpu: {{ .Values.global.resources.cpu }}
+          {{ end }}
+          {{- if .Values.global.resources.memory }}
+            memory: {{ .Values.global.resources.memory }}
+          {{- end }}
+        {{- end }}
       {{- if .Values.download_eirinifs }}
       initContainers:
       - name: "download-eirini-rootfs"

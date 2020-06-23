@@ -112,7 +112,9 @@ spec:
     - port: {{ if .Values.ingress.use }}8888{{ else }}6666{{ end }}
       protocol: TCP
       targetPort: {{ if .Values.ingress.use }}8888{{ else }}6666{{ end }}
-      nodePort: {{ .Values.services.nodePort }}
+      {{- with .Values.services.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
       name: bits
   selector:
     name: "bits"

@@ -8,7 +8,7 @@ stringData:
   bits-config-key: |
     logging:
       level: debug
-    private_endpoint: "https://bits.{{ .Release.Namespace }}.svc.cluster.local"
+    private_endpoint: "https://bits.{{ .Release.Namespace }}.svc"
     {{- if .Values.ingress.use }}
     public_endpoint: "https://registry.{{ .Values.ingress.endpoint }}:443"
     {{- else if .Values.services.nodePort }}
@@ -47,7 +47,11 @@ stringData:
       blobstore_type: webdav
       webdav_config: &webdav_config
         directory_key: cc-buildpacks
-        private_endpoint: https://{{ .Values.blobstore.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local:4443
+        {{- $blobstore_service := .Values.blobstore.serviceName }}
+        {{- if contains "." $blobstore_service | not }}
+        {{- $blobstore_service = printf "%s.%s.svc" $blobstore_service .Release.Namespace }}
+        {{- end }}
+        private_endpoint: https://{{ $blobstore_service }}:4443
         {{- if .Values.ingress.use }}
         public_endpoint: https://blobstore.{{ .Values.ingress.endpoint }}
         {{- else if .Values.services.nodePort }}
